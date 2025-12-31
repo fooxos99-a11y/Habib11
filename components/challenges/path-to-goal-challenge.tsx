@@ -166,17 +166,23 @@ export function PathToGoalChallenge({ onSuccess, onFailure, timeLimit = 60 }: Pa
     // Draw start flag
     ctx.shadowColor = "rgba(216, 163, 85, 0.5)"
     ctx.shadowBlur = 10
-    
+
     // Flag pole
     ctx.fillStyle = "#8b6f47"
     ctx.fillRect(startPos.x - 3, startPos.y - canvasSize.height * 0.07, 6, canvasSize.height * 0.14)
 
-    // Flag
+    // Flag (smaller and closer to pole for better scaling)
     ctx.fillStyle = "#d8a355"
     ctx.beginPath()
-    ctx.moveTo(startPos.x + 3, startPos.y - canvasSize.height * 0.07)
-    ctx.lineTo(startPos.x + canvasSize.width * 0.045, startPos.y - canvasSize.height * 0.04)
-    ctx.lineTo(startPos.x + 3, startPos.y + canvasSize.height * 0.07 - canvasSize.height * 0.14)
+    // Top of pole
+    const flagTopX = startPos.x + 3
+    const flagTopY = startPos.y - canvasSize.height * 0.07
+    // Make the flag width and height relative but smaller
+    const flagWidth = Math.max(18, canvasSize.width * 0.025)
+    const flagHeight = Math.max(18, canvasSize.height * 0.045)
+    ctx.moveTo(flagTopX, flagTopY)
+    ctx.lineTo(flagTopX + flagWidth, flagTopY + flagHeight * 0.25)
+    ctx.lineTo(flagTopX, flagTopY + flagHeight)
     ctx.closePath()
     ctx.fill()
     
@@ -251,9 +257,12 @@ export function PathToGoalChallenge({ onSuccess, onFailure, timeLimit = 60 }: Pa
     if (!canvas) return { x: 0, y: 0 }
 
     const rect = canvas.getBoundingClientRect()
+    // احسب نسبة scale بين حجم العنصر المعروض وحجم الكانفس الفعلي
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
     }
   }
 
@@ -294,7 +303,12 @@ export function PathToGoalChallenge({ onSuccess, onFailure, timeLimit = 60 }: Pa
 
     if (distanceToStart <= 35) {
       setIsDrawing(true)
-      setPath([pos])
+      // Always start path at the center bottom of the flag pole
+      const flagBase = {
+        x: startPos.x,
+        y: startPos.y
+      }
+      setPath([flagBase])
     }
   }
 

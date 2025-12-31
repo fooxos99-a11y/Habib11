@@ -242,7 +242,7 @@ export default function ProfilePage() {
         <main className="flex-1 py-6 md:py-12 px-3 md:px-4">
           <div className="container mx-auto max-w-6xl">
             <div
-              className="rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 mb-6 md:mb-8 text-white"
+              className="rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 mb-2 md:mb-8 text-white"
               style={{
                 background: `linear-gradient(to right, #d8a355, #c99347)`,
               }}
@@ -354,40 +354,40 @@ export default function ProfilePage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 h-auto bg-white shadow-lg rounded-xl p-1 md:p-2 mb-6 md:mb-8">
+              <TabsList
+                className="grid w-full grid-cols-3 min-h-0 h-auto bg-white shadow-lg rounded-xl p-1 md:p-2 mb-3 md:mb-8 overflow-visible"
+                style={{ marginTop: 0 }}
+              >
                 <TabsTrigger
                   value="profile"
-                  className="text-sm md:text-lg font-bold py-3 md:py-4 rounded-lg data-[state=active]:text-white"
+                  className="w-full h-auto flex flex-col items-center justify-center gap-1 text-base md:text-xl font-extrabold py-4 md:py-5 rounded-lg data-[state=active]:text-white leading-tight"
                   style={{
                     background: activeTab === "profile" ? `linear-gradient(to right, #d8a355, #c99347)` : undefined,
                   }}
                 >
-                  <User className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2" />
-                  <span className="hidden sm:inline">الملف الشخصي</span>
-                  <span className="sm:hidden">الملف</span>
+                  <User className="w-7 h-7 md:w-8 md:h-8 mb-1" />
+                  <span className="block leading-tight">الملف الشخصي</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="achievements"
-                  className="text-sm md:text-lg font-bold py-3 md:py-4 rounded-lg data-[state=active]:text-white"
+                  className="w-full h-auto flex flex-col items-center justify-center gap-1 text-base md:text-xl font-extrabold py-4 md:py-5 rounded-lg data-[state=active]:text-white leading-tight"
                   style={{
                     background:
                       activeTab === "achievements" ? `linear-gradient(to right, #d8a355, #c99347)` : undefined,
                   }}
                 >
-                  <Award className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2" />
-                  <span className="hidden sm:inline">الإنجازات</span>
-                  <span className="sm:hidden">الإنجاز</span>
+                  <Award className="w-7 h-7 md:w-8 md:h-8 mb-1" />
+                  <span className="block leading-tight">الإنجازات</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="records"
-                  className="text-sm md:text-lg font-bold py-3 md:py-4 rounded-lg data-[state=active]:text-white"
+                  className="w-full h-auto flex flex-col items-center justify-center gap-1 text-base md:text-xl font-extrabold py-4 md:py-5 rounded-lg data-[state=active]:text-white leading-tight"
                   style={{
                     background: activeTab === "records" ? `linear-gradient(to right, #d8a355, #c99347)` : undefined,
                   }}
                 >
-                  <BarChart3 className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2" />
-                  <span className="hidden sm:inline">السجلات</span>
-                  <span className="sm:hidden">السجل</span>
+                  <BarChart3 className="w-7 h-7 md:w-8 md:h-8 mb-1" />
+                  <span className="block leading-tight">السجلات</span>
                 </TabsTrigger>
               </TabsList>
 

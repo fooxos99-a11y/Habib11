@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
         if (totalPoints > 0) {
           const { data: studentData, error: fetchError } = await supabase
             .from("students")
-            .select("points")
+            .select("points, store_points")
             .eq("id", student_id)
             .single()
 
@@ -253,23 +253,27 @@ export async function POST(request: NextRequest) {
             console.error("[v0] Error fetching student points:", fetchError)
           } else {
             const currentPoints = studentData.points || 0
+            const currentStorePoints = studentData.store_points || 0
             const newPoints = currentPoints + totalPoints
+            const newStorePoints = currentStorePoints + totalPoints
 
-            console.log("[v0] Updating student points:", {
+            console.log("[v0] Updating student points and store_points:", {
               currentPoints,
+              currentStorePoints,
               addedPoints: totalPoints,
               newPoints,
+              newStorePoints,
             })
 
             const { error: updateError } = await supabase
               .from("students")
-              .update({ points: newPoints })
+              .update({ points: newPoints, store_points: newStorePoints })
               .eq("id", student_id)
 
             if (updateError) {
-              console.error("[v0] Error updating student points:", updateError)
+              console.error("[v0] Error updating student points/store_points:", updateError)
             } else {
-              console.log("[v0] Student points updated successfully to:", newPoints)
+              console.log("[v0] Student points and store_points updated successfully to:", newPoints, newStorePoints)
             }
           }
         }
@@ -346,31 +350,35 @@ export async function POST(request: NextRequest) {
         if (totalPoints > 0) {
           const { data: studentData, error: fetchError } = await supabase
             .from("students")
-            .select("points")
+            .select("points, store_points")
             .eq("id", student_id)
             .single()
 
           if (fetchError) {
             console.error("[v0] Error fetching student points:", fetchError)
           } else {
-            const currentPoints = studentData.points || 0
-            const newPoints = currentPoints + totalPoints
+            const currentPoints = studentData.points || 0;
+            const currentStorePoints = studentData.store_points || 0;
+            const newPoints = currentPoints + totalPoints;
+            const newStorePoints = currentStorePoints + totalPoints;
 
-            console.log("[v0] Updating student points:", {
+            console.log("[v0] Updating student points and store_points:", {
               currentPoints,
+              currentStorePoints,
               addedPoints: totalPoints,
               newPoints,
-            })
+              newStorePoints,
+            });
 
             const { error: updateError } = await supabase
               .from("students")
-              .update({ points: newPoints })
-              .eq("id", student_id)
+              .update({ points: newPoints, store_points: newStorePoints })
+              .eq("id", student_id);
 
             if (updateError) {
-              console.error("[v0] Error updating student points:", updateError)
+              console.error("[v0] Error updating student points/store_points:", updateError);
             } else {
-              console.log("[v0] Student points updated successfully to:", newPoints)
+              console.log("[v0] Student points and store_points updated successfully to:", newPoints, newStorePoints);
             }
           }
         }

@@ -43,14 +43,6 @@ export default function PathwaysPage() {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true"
     const role = localStorage.getItem("userRole")
     setUserRole(role)
-
-    // إذا وجدنا levelCompleted في localStorage، أعد تحميل البيانات ثم احذفه
-    if (localStorage.getItem("levelCompleted") === "true") {
-      localStorage.removeItem("levelCompleted");
-      window.location.reload();
-      return;
-    }
-
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -156,35 +148,35 @@ export default function PathwaysPage() {
         userPoints: 0,
       }))
     return (
-      <div className="min-h-screen flex flex-col bg-[#00312e]" dir="rtl">
+      <div className="min-h-screen flex flex-col bg-white" dir="rtl">
         <Header />
         <main className="flex-1 py-6 md:py-12 px-3 md:px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-8 md:mb-12">
               <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
                 <BookOpen className="w-6 h-6 md:w-8 md:h-8 text-[#d8a355]" />
-                <h1 className="text-3xl md:text-5xl font-bold text-white">المسار (عرض إداري)</h1>
+                <h1 className="text-3xl md:text-5xl font-bold text-[#1a2332]">المسار (عرض إداري)</h1>
               </div>
-              <p className="text-base md:text-lg text-[#faf9f6]">جميع المستويات مفتوحة للإداري</p>
+              <p className="text-base md:text-lg text-gray-600">جميع المستويات مفتوحة للإداري</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
               {openLevels.map((level) => (
                 <div
                   key={level.id}
-                  className={`relative rounded-xl overflow-hidden transition-all duration-300 shadow-sm border border-[#d8a355]/40 bg-[#023232] hover:shadow-lg`}
+                  className={`relative rounded-xl overflow-hidden transition-all duration-300 shadow-sm border border-[#d8a355]/30 bg-white hover:shadow-lg`}
                   style={{ minHeight: '210px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '12px' }}
                 >
                   <div className={`flex flex-col justify-between h-full`} style={{ flex: 1 }}>
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <Zap className="w-5 h-5 text-[#d8a355]" />
-                        <span className="font-bold text-[#faf9f6]">{level.title}</span>
+                        <span className="font-bold text-[#1a2332]">{level.title}</span>
                       </div>
-                      <p className="text-sm text-[#faf9f6]/80 mb-2">{level.description}</p>
-                      <p className="text-xs text-[#d8a355]/80">الأسبوع {level.week}</p>
+                      <p className="text-sm text-gray-600 mb-2">{level.description}</p>
+                      <p className="text-xs text-gray-400">الأسبوع {level.week}</p>
                     </div>
                     <Button
-                      className="w-full mt-4 bg-gradient-to-r from-[#d8a355] to-[#c99347] hover:from-[#c99347] hover:to-[#b88341] text-[#00312e] font-bold"
+                      className="w-full mt-4 bg-[#d8a355] hover:bg-[#c99245] text-[#00312e] font-bold"
                       onClick={() => router.push(`/pathways/level/${level.id}`)}
                     >
                       دخول المستوى
@@ -201,7 +193,7 @@ export default function PathwaysPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#00312e]" dir="rtl">
+    <div className="min-h-screen flex flex-col bg-white" dir="rtl">
       <Header />
 
       <main className="flex-1 py-6 md:py-12 px-3 md:px-4">
@@ -210,31 +202,31 @@ export default function PathwaysPage() {
           <div className="text-center mb-8 md:mb-12">
             <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
               <BookOpen className="w-6 h-6 md:w-8 md:h-8 text-[#d8a355]" />
-              <h1 className="text-3xl md:text-5xl font-bold text-white">المسار</h1>
+              <h1 className="text-3xl md:text-5xl font-bold text-[#1a2332]">المسار</h1>
             </div>
-            <p className="text-base md:text-lg text-[#faf9f6]">تقدم عبر 10 مستويات تعليمية وحقق الإنجازات</p>
+            <p className="text-base md:text-lg text-gray-600">تقدم عبر 10 مستويات تعليمية وحقق الإنجازات</p>
             <div className="mt-3 md:mt-4 max-w-2xl mx-auto">
-              <p className="text-xs md:text-sm text-[#00312e] bg-[#d8a355] border border-[#d8a355] rounded-lg p-2 md:p-3">
+              <p className="text-xs md:text-sm text-[#1a2332] bg-[#faf9f6] border border-[#d8a355] rounded-lg p-2 md:p-3">
                 في حال تم إنجاز المستوى في أسبوع بعد الأسبوع المحدد، سيتم خصم نصف النقاط عند احتسابه
               </p>
             </div>
           </div>
 
           {/* Progress Section */}
-          <div className="bg-gradient-to-r from-[#d8a355] to-[#c99347] rounded-xl md:rounded-2xl p-6 md:p-8 mb-8 md:mb-12 text-[#00312e] shadow-lg">
+          <div className="bg-gradient-to-r from-[#00312e] to-[#023232] rounded-xl md:rounded-2xl p-6 md:p-8 mb-8 md:mb-12 text-white shadow-lg">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               {/* Progress Bar - now first */}
               <div className="flex flex-col justify-center md:col-span-2">
-                <p className="text-xs md:text-sm opacity-80 mb-2 text-right">التقدم العام</p>
-                <Progress value={progressPercentage} className="h-2 md:h-3 [&>div]:origin-right bg-[#faf9f6]" />
-                <p className="text-xs md:text-sm opacity-80 mt-2 text-right">{Math.round(progressPercentage)}% مكتمل</p>
+                <p className="text-xs md:text-sm opacity-75 mb-2 text-right">التقدم العام</p>
+                <Progress value={progressPercentage} className="h-2 md:h-3 [&>div]:origin-right" />
+                <p className="text-xs md:text-sm opacity-75 mt-2 text-right">{Math.round(progressPercentage)}% مكتمل</p>
               </div>
 
               {/* Total Points - now second */}
               <div className="flex flex-col items-center justify-center">
-                <Trophy className="w-8 h-8 md:w-10 md:h-10 text-white mb-2" />
-                <div className="text-3xl md:text-4xl font-bold text-white">{totalPoints}</div>
-                <p className="text-base md:text-lg opacity-90 text-white">إجمالي النقاط</p>
+                <Trophy className="w-8 h-8 md:w-10 md:h-10 text-[#d8a355] mb-2" />
+                <div className="text-3xl md:text-4xl font-bold text-[#d8a355]">{totalPoints}</div>
+                <p className="text-base md:text-lg opacity-90">إجمالي النقاط</p>
               </div>
             </div>
           </div>
@@ -244,7 +236,7 @@ export default function PathwaysPage() {
             {levels.map((level) => (
               <div
                 key={level.id}
-                className={`relative rounded-xl overflow-hidden transition-all duration-300 shadow-sm border border-[#d8a355]/40 bg-[#023232] ${
+                className={`relative rounded-xl overflow-hidden transition-all duration-300 shadow-sm border border-[#d8a355]/30 bg-white ${
                   level.isCompleted
                     ? "opacity-40 cursor-not-allowed"
                     : level.isLocked
@@ -270,7 +262,7 @@ export default function PathwaysPage() {
 
                     {level.isLocked && (
                       <div className="flex items-center justify-center gap-1 mb-1 md:gap-2 md:mb-3">
-                        <Lock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#d8a355]/60" />
+                        <Lock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-500" />
                       </div>
                     )}
 
@@ -283,16 +275,16 @@ export default function PathwaysPage() {
 
                     {!level.isLocked && (
                       <h3
-                        className={`text-xs sm:text-sm md:text-lg font-bold mb-1 text-center ${level.isCompleted ? "text-[#faf9f6]" : "text-[#faf9f6]"}`}
+                        className={`text-xs sm:text-sm md:text-lg font-bold mb-1 text-center ${level.isCompleted ? "text-[#1a2332]" : "text-[#1a2332]"}`}
                       >
                         {level.title}
                       </h3>
                     )}
 
-                    {level.isLocked && <p className="text-[10px] sm:text-xs md:text-sm font-semibold text-[#faf9f6]/70 mb-1 text-center">الأسبوع {level.week}</p>}
+                    {level.isLocked && <p className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 mb-1 text-center">الأسبوع {level.week}</p>}
 
                     {!level.isLocked && (
-                      <p className={`text-[10px] sm:text-xs md:text-sm ${level.isCompleted ? "text-[#faf9f6]/80" : "text-[#faf9f6]/80"} text-center`}>
+                      <p className={`text-[10px] sm:text-xs md:text-sm ${level.isCompleted ? "text-gray-600" : "text-gray-600"} text-center`}>
                         {level.description}
                       </p>
                     )}
@@ -303,12 +295,12 @@ export default function PathwaysPage() {
                     <div className="flex flex-col gap-2 md:gap-3">
                       <div className="flex items-center gap-1 md:gap-2 justify-center">
                         <Zap className="w-4 h-4 md:w-5 md:h-5 text-[#d8a355]" />
-                        <span className="text-sm md:text-base font-semibold text-[#faf9f6]">{level.userPoints} نقطة</span>
+                        <span className="text-sm md:text-base font-semibold text-[#1a2332]">{level.userPoints} نقطة</span>
                       </div>
                       {level.isCompleted ? (
                         <Button
                           disabled
-                          className="w-full bg-gradient-to-r from-[#d8a355] to-[#c99347] text-[#00312e] font-bold h-10 md:h-12 text-sm md:text-base rounded-lg flex items-center justify-center gap-2 opacity-40 cursor-not-allowed no-underline hover:no-underline focus:no-underline"
+                          className="w-full bg-[#d8a355] text-[#00312e] font-bold h-10 md:h-12 text-sm md:text-base rounded-lg flex items-center justify-center gap-2 opacity-40 cursor-not-allowed no-underline hover:no-underline focus:no-underline"
                           style={{ marginTop: '4px' }}
                         >
                           مكتمل
@@ -317,7 +309,7 @@ export default function PathwaysPage() {
                         (!level.isLocked && !level.isCompleted) ? (
                           <Button
                             onClick={() => router.push(`/pathways/level/${level.id}`)}
-                            className="w-full bg-gradient-to-r from-[#d8a355] to-[#c99347] hover:from-[#c99347] hover:to-[#b88341] text-[#00312e] font-bold h-10 md:h-12 text-sm md:text-base rounded-lg no-underline hover:no-underline focus:no-underline"
+                            className="w-full bg-[#d8a355] hover:bg-[#c99245] text-[#00312e] font-bold h-10 md:h-12 text-sm md:text-base rounded-lg no-underline hover:no-underline focus:no-underline"
                             style={{ marginTop: '4px' }}
                           >
                             ابدأ

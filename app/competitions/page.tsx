@@ -45,9 +45,9 @@ export default function CompetitionsPage() {
       comingSoon: false,
     },
     {
-      id: "guess-image",
+      id: "guess-images",
       title: "خمن الصورة",
-      description: "اكشف الخانات واكتشف الصورة قبل الفريق الآخر",
+      description: "اكتشف معنى الصورة قبل الفريق الآخر",
       icon: Puzzle,
       color: "from-[#d8a355] to-[#c89547]",
       available: true,

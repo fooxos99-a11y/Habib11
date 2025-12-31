@@ -246,36 +246,64 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2 rounded-xl shadow-2xl border border-[#d8a355]/30 bg-white text-[#00312e]">
-                  {userRole === "admin" ? (
-                    <DropdownMenuItem
-                      onClick={() => handleDropdownNavClick("/admin/dashboard")}
-                      className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200"
-                    >
-                      <LayoutDashboard className="w-5 h-5 ml-2" />
-                      لوحة التحكم
-                    </DropdownMenuItem>
-                  ) : userRole === "teacher" ? (
+                  {userRole === "student" && (
                     <>
                       <DropdownMenuItem
-                        onClick={() => handleDropdownNavClick("/teacher/halaqah/1")}
-                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200"
+                        onClick={() => { handleDropdownNavClick("/profile"); setIsMobileProfileDropdownOpen(false); }}
+                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200 block md:hidden flex flex-row items-center gap-2"
                       >
-                        <Users className="w-5 h-5 ml-2" />
-                        إدارة الحلقة
+                        <User className="w-5 h-5" />
+                        <span>الملف الشخصي</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="block md:hidden" />
+                    </>
+                  )}
+                  {userRole === "teacher" && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => { handleDropdownNavClick("/teacher/halaqah/1"); setIsMobileProfileDropdownOpen(false); }}
+                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200 block md:hidden flex flex-row items-center gap-2"
+                      >
+                        <Users className="w-5 h-5" />
+                        <span>إدارة الحلقة</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => { handleDropdownNavClick("/teacher/dashboard"); setIsMobileProfileDropdownOpen(false); }}
+                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200 block md:hidden flex flex-row items-center gap-2"
+                      >
+                        <User className="w-5 h-5" />
+                        <span>الملف الشخصي</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={handleOpenAttendanceModal}
-                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200"
+                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200 block md:hidden flex flex-row items-center gap-2"
                       >
-                        <ClipboardCheck className="w-5 h-5 ml-2" />
-                        التحضير
+                        <ClipboardCheck className="w-5 h-5" />
+                        <span>التحضير</span>
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator className="block md:hidden" />
                     </>
-                  ) : (
-                    <DropdownMenuSeparator />
                   )}
-                {/* End of role-based menu items */}
-                <DropdownMenuItem
+                  {userRole === "admin" && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => { handleDropdownNavClick("/admin/profile"); setIsMobileProfileDropdownOpen(false); }}
+                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200 block md:hidden flex flex-row items-center gap-2"
+                      >
+                        <User className="w-5 h-5" />
+                        <span>الملف الشخصي</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => { handleDropdownNavClick("/admin/dashboard"); setIsMobileProfileDropdownOpen(false); }}
+                        className="cursor-pointer text-base py-3 focus:bg-[#f5f1e8] focus:text-[#d8a355] transition-all duration-200 block md:hidden flex flex-row items-center gap-2"
+                      >
+                        <LayoutDashboard className="w-5 h-5" />
+                        <span>لوحة التحكم</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="block md:hidden" />
+                    </>
+                  )}
+                  <DropdownMenuItem
                     onClick={handleLogout}
                     className="cursor-pointer text-base py-3 text-red-600 focus:bg-red-50 focus:text-red-700 transition-all duration-200"
                   >

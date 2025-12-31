@@ -164,7 +164,7 @@ export async function PATCH(request: Request) {
     if (add_points !== undefined) {
       const { data: currentStudent, error: fetchError } = await supabase
         .from("students")
-        .select("points")
+        .select("points, store_points")
         .eq("id", studentId)
         .single()
 
@@ -173,9 +173,12 @@ export async function PATCH(request: Request) {
       }
 
       const currentPoints = currentStudent?.points || 0
+      const currentStorePoints = currentStudent?.store_points || 0
       const newPoints = currentPoints + add_points
+      const newStorePoints = currentStorePoints + add_points
       updateData.points = newPoints
-      console.log(`[v0] Adding points - Current: ${currentPoints}, Add: ${add_points}, New: ${newPoints}`)
+      updateData.store_points = newStorePoints
+      console.log(`[v0] Adding points - Current: ${currentPoints}, Add: ${add_points}, New: ${newPoints}, Store: ${currentStorePoints} -> ${newStorePoints}`)
     } else if (points !== undefined) {
       updateData.points = points
     }

@@ -27,17 +27,17 @@ async function getSupabase() {
 }
 
 // GET - جلب جميع الصور
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await getSupabase()
-    
-    const { data, error } = await supabase
-      .from("guess_images")
-      .select("*")
-      .order("created_at", { ascending: false })
-
+    const { searchParams } = new URL(request.url)
+    const stageId = searchParams.get("stage_id")
+    let query = supabase.from("guess_images").select("*")
+    if (stageId) {
+      query = query.eq("stage_id", stageId)
+    }
+    const { data, error } = await query.order("created_at", { ascending: false })
     if (error) throw error
-
     return NextResponse.json(data || [])
   } catch (error) {
     console.error("Error fetching images:", error)
@@ -51,9 +51,9 @@ export async function POST(request: Request) {
     const supabase = await getSupabase()
 
     const body = await request.json()
-    const { image_url, answer, hint, difficulty } = body
+    const { image_url, answer, hint, difficulty, stage_id } = body
 
-    if (!image_url || !answer) {
+    if (!image_url || !answer || !stage_id) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -68,7 +68,8 @@ export async function POST(request: Request) {
           answer,
           hint: hint || null,
           difficulty: difficulty || 'متوسط',
-          active: true
+          active: true,
+          stage_id
         }
       ])
       .select()

@@ -726,40 +726,48 @@ export default function AdminDashboard() {
   }
 
   const handleSavePoints = async () => {
-    if (!editingStudentPoints) return
+    if (!editingStudentPoints) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
+      const oldPoints = editingStudentPoints.points || 0;
+      const diff = Number.parseInt(newPoints) - oldPoints;
+      let bodyObj;
+      if (diff > 0) {
+        // زيادة: أضف للنقطتين معًا
+        bodyObj = { add_points: diff };
+      } else {
+        // نقصان أو نفس القيمة: عدل العام فقط
+        bodyObj = { points: Number.parseInt(newPoints) };
+      }
       const response = await fetch(`/api/students?id=${editingStudentPoints.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          points: Number.parseInt(newPoints),
-        }),
-      })
+        body: JSON.stringify(bodyObj),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
         toast({
           title: "✓ تم الحفظ بنجاح",
           description: `تم تحديث نقاط الطالب ${editingStudentPoints.name} إلى ${newPoints} نقطة`,
           className: "bg-gradient-to-r from-[#D4AF37] to-[#C9A961] text-white border-none",
-        })
-        setIsEditPointsDialogOpen(false)
-        setEditingStudentPoints(null)
-        setNewPoints("")
-        fetchStudents()
+        });
+        setIsEditPointsDialogOpen(false);
+        setEditingStudentPoints(null);
+        setNewPoints("");
+        fetchStudents();
       } else {
-        alert("فشل في تحديث النقاط")
+        alert("فشل في تحديث النقاط");
       }
     } catch (error) {
-      console.error("[v0] Error updating points:", error)
-      alert("حدث خطأ أثناء تحديث النقاط")
+      console.error("[v0] Error updating points:", error);
+      alert("حدث خطأ أثناء تحديث النقاط");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -949,8 +957,12 @@ export default function AdminDashboard() {
                   </Button>
                   <Button
                     onClick={() => {
-                      setIsStudentManagementDialogOpen(false)
-                      setIsEditPointsDialogOpen(true)
+                      setIsStudentManagementDialogOpen(false);
+                      setSelectedCircleForPoints("");
+                      setSelectedStudentForPoints("");
+                      setEditingStudentPoints(null);
+                      setNewPoints("");
+                      setIsEditPointsDialogOpen(true);
                     }}
                     className="bg-gradient-to-r from-[#D4AF37] to-[#C9A961] hover:from-[#C9A961] hover:to-[#BFA050] text-[#023232] font-bold h-14 text-lg"
                   >
@@ -1212,15 +1224,19 @@ export default function AdminDashboard() {
                       <Label htmlFor="newPoints" className="text-base font-semibold text-[#1a2332]">
                         النقاط الجديدة
                       </Label>
-                      <Input
-                        id="newPoints"
-                        type="number"
-                        value={newPoints}
-                        onChange={(e) => setNewPoints(e.target.value)}
-                        placeholder="أدخل النقاط الجديدة"
-                        className="text-base"
-                        min="0"
-                      />
+                      <div className="flex items-center gap-2">
+                        <Button type="button" variant="outline" onClick={() => setNewPoints((prev) => (Math.max(0, Number(prev) - 10)).toString())} disabled={Number(newPoints) <= 0}>-</Button>
+                        <Input
+                          id="newPoints"
+                          type="number"
+                          value={newPoints}
+                          onChange={(e) => setNewPoints(e.target.value)}
+                          placeholder="أدخل النقاط الجديدة"
+                          className="text-base w-24 text-center"
+                          min="0"
+                        />
+                        <Button type="button" variant="outline" onClick={() => setNewPoints((prev) => (Number(prev) + 10).toString())}>+</Button>
+                      </div>
                       <p className="text-sm text-gray-500">النقاط الحالية: {editingStudentPoints.points || 0}</p>
                     </div>
                   )}
@@ -1276,40 +1292,16 @@ export default function AdminDashboard() {
                   ) : (
                     <Table>
                       <TableHeader>
-                        <TableRow>
-                          <TableHead className="text-right">رقم الحساب</TableHead>
-                          <TableHead className="text-right">الاسم</TableHead>
-                          <TableHead className="text-right">نوع الحساب</TableHead>
-                          <TableHead className="text-right">رقم الهوية</TableHead>
-                          <TableHead className="text-right">رقم الجوال / ولي الأمر</TableHead>
-                          <TableHead className="text-right">الحلقة</TableHead>
-                        </TableRow>
+                        {/* تمت إزالة كود جافاسكريبت غير مسموح به هنا */}
                       </TableHeader>
                       <TableBody>
                         {allUsers.map((user) => (
                           <TableRow key={user.id}>
-                            <TableCell className="font-medium">{user.account_number}</TableCell>
+                            <TableCell>{user.account_number}</TableCell>
                             <TableCell>{user.name}</TableCell>
-                            <TableCell>
-                              <span
-                                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                  user.role === "طالب"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : user.role === "معلم"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-purple-100 text-purple-800"
-                                }`}
-                              >
-                                {user.role}
-                              </span>
-                            </TableCell>
-                            <TableCell>{user.id_number || "-"}</TableCell>
-                            <TableCell dir="ltr" className="text-right">
-                              {user.phone_number || "-"}
-                              {user.role === "طالب" && user.guardian_phone && (
-                                <span className="text-xs text-gray-500 block">(ولي الأمر)</span>
-                              )}
-                            </TableCell>
+                            <TableCell>{user.role}</TableCell>
+                            <TableCell>{user.id_number}</TableCell>
+                            <TableCell>{user.guardian_phone}</TableCell>
                             <TableCell>{user.halaqah || "-"}</TableCell>
                           </TableRow>
                         ))}
@@ -1338,6 +1330,14 @@ export default function AdminDashboard() {
             </Button>
             {/* NEW BUTTON END */}
             {/* Add student reports button in the main navigation area after other buttons */}
+                        {/* زر إدارة المتجر */}
+                        <Button
+                          onClick={() => router.push("/admin/store-management")}
+                          className="bg-gradient-to-r from-[#D4AF37] to-[#C9A961] hover:from-[#C9A961] hover:to-[#BFA050] text-[#023232] font-bold"
+                        >
+                          <Settings className="w-5 h-5 ml-2" />
+                          إدارة المتجر
+                        </Button>
             {/* Removed the standalone student reports button - now only accessible via Reports dialog */}
             {/* </CHANGE> */}
           </div>

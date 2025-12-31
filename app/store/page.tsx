@@ -7,181 +7,16 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ShoppingBag, Star, Lock, Palette, Type, Award, Sparkles } from 'lucide-react'
+import { ShoppingBag, Star } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
-
-interface Product {
-  id: string
-  name: string
-  description: string
-  price: number
-  icon: React.ReactNode
-  category: "theme" | "badge" | "font" | "coming_soon"
-  themeValue?: string
-}
-
-interface Purchase {
-  product_id: string
-  purchased_at: string
-}
-
-const PRODUCTS: Product[] = [
-  {
-    id: "theme_beige",
-    name: "خلفية بيجي كلاسيكية",
-    description: "الخلفية الكلاسيكية الأنيقة بلون البيج الذهبي",
-    price: 500,
-    icon: <Palette className="w-8 h-8" />,
-    category: "theme",
-    themeValue: "beige",
-  },
-  {
-    id: "theme_ocean",
-    name: "خلفية المحيط الأزرق",
-    description: "خلفية مستوحاة من أعماق المحيط بدرجات الأزرق",
-    price: 500,
-    icon: <Palette className="w-8 h-8" />,
-    category: "theme",
-    themeValue: "ocean",
-  },
-  {
-    id: "theme_sunset",
-    name: "خلفية غروب الشمس",
-    description: "خلفية دافئة بألوان الغروب البرتقالية",
-    price: 500,
-    icon: <Palette className="w-8 h-8" />,
-    category: "theme",
-    themeValue: "sunset",
-  },
-  {
-    id: "theme_forest",
-    name: "خلفية الغابة الخضراء",
-    description: "تصميم كامل مستوحى من الغابة مع أوراق وظلال",
-    price: 500,
-    icon: <Palette className="w-8 h-8" />,
-    category: "theme",
-    themeValue: "forest",
-  },
-  {
-    id: "theme_purple",
-    name: "خلفية بنفسجية ملكية",
-    description: "خلفية أنيقة بدرجات البنفسجي الملكي",
-    price: 500,
-    icon: <Palette className="w-8 h-8" />,
-    category: "theme",
-    themeValue: "purple",
-  },
-  {
-    id: "special_title",
-    name: "لقب خاص",
-    description: "لقب مميز يظهر بجانب اسمك في لائحة الترتيب",
-    price: 1000,
-    icon: <Award className="w-8 h-8" />,
-    category: "badge",
-  },
-  {
-    id: "star_badge",
-    name: "نجمة الإتقان",
-    description: "نجمة ذهبية تظهر بجانب اسمك في الترتيب",
-    price: 1500,
-    icon: <Star className="w-8 h-8" />,
-    category: "badge",
-  },
-  {
-    id: "custom_font",
-    name: "تغيير الخط",
-    description: "خط مميز لعرض اسمك في لائحة الترتيب",
-    price: 2000,
-    icon: <Type className="w-8 h-8" />,
-    category: "font",
-  },
-  {
-    id: "coming_soon_1",
-    name: "منتج قريباً",
-    description: "منتج جديد سيتم إضافته قريباً",
-    price: 0,
-    icon: <Lock className="w-8 h-8" />,
-    category: "coming_soon",
-  },
-  {
-    id: "coming_soon_2",
-    name: "منتج قريباً",
-    description: "منتج جديد سيتم إضافته قريباً",
-    price: 0,
-    icon: <Lock className="w-8 h-8" />,
-    category: "coming_soon",
-  },
-]
-
-const CATEGORIES = [
-  {
-    id: "backgrounds",
-    name: "الخلفيات",
-    description: "اختر خلفية وتصميم فريد لبطاقتك في لائحة الترتيب",
-    icon: Palette,
-    design: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <div className="relative w-40 h-40">
-          <div className="absolute top-2 left-2 w-24 h-32 border-4 border-dashed rounded-lg"></div>
-          <div className="absolute top-8 right-4 w-20 h-24 bg-white/30 rounded-lg"></div>
-          <div className="absolute bottom-4 left-8 w-16 h-20 bg-white/20 rounded-lg"></div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "effects",
-    name: "التأثيرات",
-    description: "تأثيرات مميزة تُطبق على كامل بطاقتك في لائحة الترتيب",
-    icon: Sparkles,
-    design: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <div className="relative w-40 h-40">
-          <div className="absolute inset-0 border-4 rounded-xl animate-pulse"></div>
-          <Sparkles className="absolute top-4 left-4 w-8 h-8 animate-ping" />
-          <Sparkles className="absolute bottom-4 right-4 w-6 h-6 animate-pulse" style={{ animationDelay: "0.5s" }} />
-          <Sparkles className="absolute top-8 right-8 w-7 h-7 animate-ping" style={{ animationDelay: "0.7s" }} />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "badges",
-    name: "الشارات",
-    description: "أضف شارة مميزة تظهر بجانب اسمك في الترتيب",
-    icon: Award,
-    design: (
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <div className="relative w-40 h-40">
-          <Award className="w-16 h-16 absolute top-4 left-6" />
-          <Award className="w-10 h-10 absolute top-12 right-8" />
-          <Award className="w-8 h-8 absolute bottom-6 left-12" />
-          <Award className="w-12 h-12 absolute bottom-4 right-6" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "fonts",
-    name: "الخطوط",
-    description: "غير الخط الخاص باسمك لشيء مميز",
-    icon: Type,
-    design: (
-      <div className="absolute inset-0 flex flex-col items-center justify-center opacity-20 gap-3">
-        <div className="h-3 w-32 bg-current rounded"></div>
-        <div className="h-2 w-40 bg-current rounded"></div>
-        <div className="h-3 w-28 bg-current rounded"></div>
-        <div className="h-2 w-36 bg-current rounded"></div>
-        <div className="h-3 w-24 bg-current rounded"></div>
-      </div>
-    ),
-  },
-]
+import { getSupabase } from "@/lib/supabase"
 
 export default function StorePage() {
   const [studentPoints, setStudentPoints] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [products, setProducts] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
   const router = useRouter()
   const { toast } = useToast()
 
@@ -192,9 +27,11 @@ export default function StorePage() {
 
     if (loggedIn && role === "student") {
       fetchStudentData()
+      fetchStoreData()
     } else {
       setIsLoading(false)
     }
+    // eslint-disable-next-line
   }, [])
 
   const fetchStudentData = async () => {
@@ -202,17 +39,23 @@ export default function StorePage() {
       const accountNumber = localStorage.getItem("accountNumber")
       const response = await fetch(`/api/students`)
       const data = await response.json()
-
       const student = data.students?.find((s: any) => s.account_number === Number(accountNumber))
-
       if (student) {
-        setStudentPoints(student.points || 0)
+        setStudentPoints(student.store_points || 0)
       }
     } catch (error) {
       console.error("[v0] Error fetching student data:", error)
-    } finally {
-      setIsLoading(false)
     }
+  }
+
+  const fetchStoreData = async () => {
+    setIsLoading(true)
+    const supabase = getSupabase()
+    const { data: productsData } = await supabase.from("store_products").select("*")
+    const { data: categoriesData } = await supabase.from("store_categories").select("*")
+    setProducts(productsData || [])
+    setCategories(categoriesData || [])
+    setIsLoading(false)
   }
 
   const handleCategoryClick = (categoryId: string) => {
@@ -269,117 +112,84 @@ export default function StorePage() {
             </div>
           </div>
 
-          {/* Categories Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
-            {CATEGORIES.map((category) => {
-              const Icon = category.icon
-              const isComingSoon = category.id === "coming_soon"
-
-              return (
-                <Card
-                  key={category.id}
-                  className={`cursor-pointer transition-all duration-300 overflow-hidden border-3 relative ${
-                    isComingSoon
-                      ? "opacity-60 border-gray-200 bg-gray-50"
-                      : "border-[#d8a355] hover:border-[#c99347] hover:shadow-2xl hover:scale-105 shadow-lg hover:-translate-y-1"
-                  }`}
-                  onClick={() => !isComingSoon && handleCategoryClick(category.id)}
-                >
-                  {!isComingSoon && (
-                    <>
-                      {/* Top-left corner - Enhanced with circular accent */}
-                      <div className="absolute top-0 left-0 w-16 h-16 overflow-hidden">
-                        <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-[#d8a355] rounded-tl-lg"></div>
-                        <div className="absolute top-1 left-1 w-3 h-3 bg-[#d8a355] rounded-full animate-pulse"></div>
-                        <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#d8a355]/20 rounded-tl-2xl"></div>
+          {/* Products by Category */}
+          <div className="space-y-12 mb-8 md:mb-12">
+            {categories.length === 0 ? (
+              <div className="text-center text-gray-500">لا توجد فئات متاحة حالياً</div>
+            ) : (
+              categories.map((category) => {
+                const categoryProducts = products.filter((prod) => prod.category_id === category.id)
+                return (
+                  <div key={category.id} className="mb-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-[#1a2332] mb-4 text-center">{category.name}</h2>
+                    {categoryProducts.length === 0 ? (
+                      <div className="text-center text-gray-400">لا توجد منتجات في هذه الفئة</div>
+                    ) : (
+                      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {categoryProducts.map((prod) => (
+                          <div key={prod.id} className="flex flex-col items-center">
+                            <Card className="border border-[#D4AF37]/40 shadow-sm rounded-xl p-0 w-full">
+                              <CardContent className="flex flex-col items-center p-0">
+                                <div className="w-full aspect-square flex items-center justify-center bg-white rounded-t-xl overflow-hidden border-b border-[#eee]">
+                                  {prod.image_url ? (
+                                    <img
+                                      src={prod.image_url}
+                                      alt={prod.name}
+                                      className="object-contain w-full h-full"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-300">لا توجد صورة</div>
+                                  )}
+                                </div>
+                                <div className="w-full flex flex-col items-center gap-0 py-3 px-2">
+                                  <Button
+                                    className="bg-[#d8a355] hover:bg-[#c99347] text-white font-bold px-4 py-1 rounded-md text-xl h-auto min-w-[60px] w-full mt-0"
+                                    onClick={async () => {
+                                      const accountNumber = localStorage.getItem("accountNumber")
+                                      const studentsRes = await fetch(`/api/students`)
+                                      const studentsData = await studentsRes.json()
+                                      const student = studentsData.students?.find((s: any) => s.account_number === Number(accountNumber))
+                                      if (!student) {
+                                        toast({ title: "خطأ", description: "لم يتم العثور على الطالب", variant: "destructive" })
+                                        return
+                                      }
+                                      if ((student.store_points ?? 0) < prod.price) {
+                                        toast({ title: "نقاط المتجر غير كافية", description: `لا تملك نقاط متجر كافية لشراء هذا المنتج`, variant: "destructive" })
+                                        return
+                                      }
+                                      const res = await fetch("/api/store-orders", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                          student_id: student.id,
+                                          student_name: student.name,
+                                          product_id: prod.id,
+                                          product_name: prod.name,
+                                          price: prod.price,
+                                        })
+                                      })
+                                      const data = await res.json()
+                                      if (res.ok && data.success) {
+                                        setStudentPoints(data.remaining_store_points)
+                                        toast({ title: "تم الشراء" })
+                                      } else {
+                                        toast({ title: "فشل الشراء", description: data.error || "حدث خطأ غير متوقع", variant: "destructive" })
+                                      }
+                                    }}
+                                  >
+                                    {prod.price} نقطة
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        ))}
                       </div>
-
-                      {/* Top-right corner - Enhanced with triangular accent */}
-                      <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-                        <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-[#d8a355] rounded-tr-lg"></div>
-                        <div className="absolute top-2 right-2 w-0 h-0 border-t-[8px] border-t-[#d8a355] border-l-[8px] border-l-transparent"></div>
-                        <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#d8a355]/20 rounded-tr-2xl"></div>
-                      </div>
-
-                      {/* Bottom-left corner - Enhanced with square accent */}
-                      <div className="absolute bottom-0 left-0 w-16 h-16 overflow-hidden">
-                        <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-[#d8a355] rounded-bl-lg"></div>
-                        <div className="absolute bottom-2 left-2 w-3 h-3 bg-[#d8a355]/60 rotate-45"></div>
-                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#d8a355]/20 rounded-bl-2xl"></div>
-                      </div>
-
-                      {/* Bottom-right corner - Enhanced with diamond accent */}
-                      <div className="absolute bottom-0 right-0 w-16 h-16 overflow-hidden">
-                        <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-[#d8a355] rounded-br-lg"></div>
-                        <div
-                          className="absolute bottom-3 right-3 w-3 h-3 bg-[#d8a355] rotate-45 animate-pulse"
-                          style={{ animationDelay: "0.5s" }}
-                        ></div>
-                        <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#d8a355]/20 rounded-br-2xl"></div>
-                      </div>
-
-                      {/* Additional decorative elements on hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                        {/* Glowing corners */}
-                        <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-[#d8a355]/20 to-transparent rounded-full blur-xl"></div>
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#d8a355]/20 to-transparent rounded-full blur-xl"></div>
-                        <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-[#d8a355]/20 to-transparent rounded-full blur-xl"></div>
-                        <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-[#d8a355]/20 to-transparent rounded-full blur-xl"></div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Design Element */}
-                  <div
-                    className={`relative overflow-hidden min-h-48 md:min-h-72 flex flex-col justify-between p-6 md:p-8 ${
-                      isComingSoon
-                        ? "bg-gray-50 text-gray-400"
-                        : category.id === "backgrounds"
-                          ? "bg-white text-[#d8a355]"
-                          : category.id === "badges"
-                            ? "bg-white text-[#d8a355]"
-                            : "bg-white text-[#d8a355]"
-                    }`}
-                  >
-                    {/* Background Shapes */}
-                    {category.design}
-
-                    {/* Content */}
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                        <div
-                          className={`p-3 md:p-4 rounded-xl shadow-md transition-all ${
-                            isComingSoon ? "bg-gray-200" : "bg-white shadow-lg hover:shadow-xl"
-                          }`}
-                        >
-                          <Icon className={`w-6 h-6 md:w-8 md:h-8 ${isComingSoon ? "text-gray-400" : "text-[#d8a355]"}`} />
-                        </div>
-                      </div>
-                      <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isComingSoon ? "text-gray-500" : "text-[#1a2332]"}`}>
-                        {category.name}
-                      </h2>
-                      <p className={`text-xs md:text-sm ${isComingSoon ? "text-gray-500" : "text-gray-600"}`}>
-                        {category.description}
-                      </p>
-                    </div>
+                    )}
                   </div>
-
-                  {/* Button */}
-                  <CardContent className="pt-4 md:pt-6">
-                    <Button
-                      className={`w-full py-4 md:py-6 text-base md:text-lg font-bold transition-all ${
-                        isComingSoon
-                          ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                          : "bg-[#d8a355] hover:bg-[#c99347] text-white shadow-lg hover:shadow-xl hover:scale-105 transform"
-                      }`}
-                      disabled={isComingSoon}
-                    >
-                      {isComingSoon ? "قريباً" : "تصفح"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
+                )
+              })
+            )}
           </div>
 
           {/* Info Section */}

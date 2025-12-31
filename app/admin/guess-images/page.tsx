@@ -10,18 +10,25 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Pencil, Trash2, Upload, ImageIcon } from "lucide-react"
+import { Plus, Pencil, Trash2, Upload, ImageIcon, X } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 type GuessImage = {
-  id: string
-  image_url: string
-  answer: string
-  hint: string | null
-  difficulty: string
-  active: boolean
+  id: string;
+  image_url: string;
+  answer: string;
+  hint: string | null;
+  active: boolean;
+  stage_id?: number;
+}
+
+type Stage = {
+  id: number
+  name: string
 }
 
 export default function GuessImagesManagement() {
+  const router = useRouter();
   const [images, setImages] = useState<GuessImage[]>([])
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -35,17 +42,75 @@ export default function GuessImagesManagement() {
   const [isDragging, setIsDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
 
+  // مراحل خمن الصورة
+  const [stages, setStages] = useState<Stage[]>([])
+  const [selectedStageId, setSelectedStageId] = useState<number | null>(null)
+  const [showAddStage, setShowAddStage] = useState(false)
+  const [newStage, setNewStage] = useState("")
+  const [stageLoading, setStageLoading] = useState(false)
+
+
+   // تعريف الدالة قبل الاستخدام
+   const addStage = async (e: React.FormEvent) => {
+     e.preventDefault()
+     if (!newStage.trim()) return
+     setStageLoading(true)
+     const res = await fetch("/api/guess-image-stages", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ name: newStage })
+     })
+     if (res.ok) {
+       setNewStage("")
+       setShowAddStage(false)
+       await fetchStages()
+     }
+     setStageLoading(false)
+   }
+
+   const deleteStage = async (id: number) => {
+     if (!confirm("هل أنت متأكد من حذف المرحلة؟")) return
+     setStageLoading(true)
+     await fetch(`/api/guess-image-stages?id=${id}`, { method: "DELETE" })
+     await fetchStages()
+     setStageLoading(false)
+   }
+
+  const fetchStages = async () => {
+    setStageLoading(true)
+    try {
+      const response = await fetch("/api/guess-image-stages")
+      const data = await response.json()
+      console.log('Stages:', data)
+      setStages(Array.isArray(data) ? data : [])
+      setSelectedStageId(null)
+    } catch (error) {
+      setStages([])
+      setSelectedStageId(null)
+    } finally {
+      setStageLoading(false)
+    }
+  }
+
   useEffect(() => {
-    fetchImages()
+    fetchStages()
   }, [])
 
-  const fetchImages = async () => {
+  useEffect(() => {
+    // حتى لو لم يوجد مرحلة، جلب الصور بدون فلترة
+    fetchImages(selectedStageId ?? undefined)
+  }, [selectedStageId])
+
+  const fetchImages = async (stageId?: number) => {
+    setLoading(true)
     try {
-      const response = await fetch("/api/guess-images")
+      let url = "/api/guess-images"
+      if (stageId) url += `?stage_id=${stageId}`
+      const response = await fetch(url)
       const data = await response.json()
+      console.log('Images:', data)
       setImages(Array.isArray(data) ? data : [])
     } catch (error) {
-      console.error("Error fetching images:", error)
       setImages([])
     } finally {
       setLoading(false)
@@ -65,6 +130,48 @@ export default function GuessImagesManagement() {
       throw new Error('فشل رفع الصورة')
     }
     
+  const fetchStages = async () => {
+    setStageLoading(true)
+    try {
+      const response = await fetch("/api/guess-image-stages")
+      const data = await response.json()
+      setStages(Array.isArray(data) ? data : [])
+      if (Array.isArray(data) && data.length > 0) {
+        setSelectedStageId(data[0].id)
+      }
+    } catch (error) {
+      setStages([])
+    } finally {
+      setStageLoading(false)
+    }
+  }
+
+  // إضافة مرحلة جديدة
+  const addStage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newStage.trim()) return
+    setStageLoading(true)
+    const res = await fetch("/api/guess-image-stages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newStage })
+    })
+    if (res.ok) {
+      setNewStage("")
+      setShowAddStage(false)
+      await fetchStages()
+    }
+    setStageLoading(false)
+  }
+
+  // حذف مرحلة
+  const deleteStage = async (id: number) => {
+    if (!confirm("هل أنت متأكد من حذف المرحلة؟")) return
+    setStageLoading(true)
+    await fetch(`/api/guess-image-stages?id=${id}`, { method: "DELETE" })
+    await fetchStages()
+    setStageLoading(false)
+  }
     const data = await response.json()
     return data.url
   }
@@ -80,12 +187,11 @@ export default function GuessImagesManagement() {
       if (selectedFile) {
         imageUrl = await uploadImage(selectedFile)
       }
-
       const dataToSend = {
         image_url: imageUrl,
         answer: formData.answer,
         hint: null,
-        difficulty: 'متوسط'
+        stage_id: selectedStageId
       }
 
       if (editingImage) {
@@ -216,76 +322,89 @@ export default function GuessImagesManagement() {
   return (
     <div className="container mx-auto p-4 sm:p-8">
       <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 border-2 border-[#d8a355]/20">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col gap-4 mb-6">
           <h1 className="text-2xl sm:text-4xl font-bold text-[#1a2332]">
-            إدارة صور خمن الصورة
+            إدارة قاعدة خمن الصورة
           </h1>
-          <Button
-            onClick={() => setDialogOpen(true)}
-            className="bg-gradient-to-r from-[#d8a355] to-[#c89547] hover:from-[#c89547] hover:to-[#b88437] text-white"
-          >
-            <Plus className="ml-2" />
-            إضافة صورة جديدة
-          </Button>
+          {/* قائمة المراحل */}
+          <div className="flex flex-wrap gap-2 items-center">
+            {stageLoading ? (
+              <span>جاري التحميل...</span>
+            ) : stages.length === 0 ? (
+              <span>لا توجد مراحل</span>
+            ) : (
+              stages.map(stage => (
+                <div key={stage.id} className={`flex items-center border rounded px-3 py-1 gap-1 ${selectedStageId === stage.id ? 'bg-[#d8a355]/20 border-[#d8a355]' : 'border-gray-300'}`}>
+                  <button
+                    className={`font-bold ${selectedStageId === stage.id ? 'text-[#d8a355]' : ''}`}
+                    style={{ cursor: 'pointer', background: 'none', border: 'none', outline: 'none' }}
+                    onClick={() => setSelectedStageId(stage.id)}
+                  >
+                    {stage.name}
+                  </button>
+                  <button onClick={() => deleteStage(stage.id)} title="حذف المرحلة" className="text-red-500 hover:text-red-700"><X size={16} /></button>
+                </div>
+              ))
+            )}
+            <Button size="sm" variant="outline" onClick={() => setShowAddStage(true)}><Plus className="w-4 h-4 ml-1" />إضافة مرحلة</Button>
+          </div>
+          {/* نافذة إضافة مرحلة */}
+          {showAddStage && (
+            <form onSubmit={addStage} className="flex gap-2 items-center mt-2">
+              <Input value={newStage} onChange={e => setNewStage(e.target.value)} placeholder="اسم المرحلة الجديدة" required />
+              <Button type="submit" disabled={stageLoading || !newStage.trim()}>حفظ</Button>
+              <Button type="button" variant="outline" onClick={() => setShowAddStage(false)}>إلغاء</Button>
+            </form>
+          )}
         </div>
 
-        {images.length === 0 ? (
-          <div className="text-center py-12">
-            <ImageIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <p className="text-xl text-gray-500">لا توجد صور حالياً</p>
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold">صور المرحلة المختارة</h2>
+          <Button
+            onClick={() => {
+              setEditingImage(null);
+              setFormData({ image_url: "", answer: "" });
+              setPreviewUrl("");
+              setSelectedFile(null);
+              setDialogOpen(true);
+            }}
+            disabled={!selectedStageId}
+            className="bg-gradient-to-r from-[#d8a355] to-[#c89547] text-white"
+          >
+            <Plus className="ml-2 w-4 h-4" /> إضافة صورة جديدة
+          </Button>
+        </div>
+        {selectedStageId ? (
+          loading ? (
+            <div className="text-center py-12">جاري التحميل...</div>
+          ) : images.length === 0 ? (
+            <div className="text-center py-12">
+              <ImageIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+              <p className="text-xl text-gray-500">لا توجد صور في هذه المرحلة</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {images.map((image) => (
+                <div
+                  key={image.id}
+                  className={`border-2 rounded-lg p-4 ${
+                    image.active ? "border-[#d8a355]" : "border-gray-300 opacity-60"
+                  }`}
+                >
+                  <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden">
+                    <img
+                      src={image.image_url}
+                      alt={image.answer}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{image.answer}</h3>
+                </div>
+              ))}
+            </div>
+          )
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {images.map((image) => (
-              <div
-                key={image.id}
-                className={`border-2 rounded-lg p-4 ${
-                  image.active ? "border-[#d8a355]" : "border-gray-300 opacity-60"
-                }`}
-              >
-                <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden">
-                  <img
-                    src={image.image_url}
-                    alt={image.answer}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="font-bold text-lg mb-2">{image.answer}</h3>
-                {image.hint && (
-                  <p className="text-sm text-gray-600 mb-2">تلميح: {image.hint}</p>
-                )}
-                <p className="text-sm text-gray-500 mb-4">
-                  الصعوبة: {image.difficulty}
-                </p>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleEdit(image)}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <Pencil className="ml-2 w-4 h-4" />
-                    تعديل
-                  </Button>
-                  <Button
-                    onClick={() => toggleActive(image)}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    {image.active ? "إيقاف" : "تفعيل"}
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(image.id)}
-                    variant="destructive"
-                    size="sm"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <div className="text-center py-12 text-xl text-gray-500">اختر المرحلة لعرض صورها</div>
         )}
       </div>
 
@@ -365,7 +484,7 @@ export default function GuessImagesManagement() {
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
-                disabled={uploading || (!selectedFile && !editingImage)}
+                disabled={uploading || (!selectedFile && !editingImage) || !selectedStageId}
                 className="flex-1 bg-gradient-to-r from-[#d8a355] to-[#c89547] hover:from-[#c89547] hover:to-[#b88437] text-white disabled:opacity-50"
               >
                 {uploading ? "جاري الرفع..." : editingImage ? "حفظ التعديلات" : "إضافة الصورة"}
