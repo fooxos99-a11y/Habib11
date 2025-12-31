@@ -387,7 +387,7 @@ export default function GuessImagesManagement() {
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className={`border-2 rounded-lg p-4 ${
+                  className={`border-2 rounded-lg p-4 relative ${
                     image.active ? "border-[#d8a355]" : "border-gray-300 opacity-60"
                   }`}
                 >
@@ -399,6 +399,13 @@ export default function GuessImagesManagement() {
                     />
                   </div>
                   <h3 className="font-bold text-lg mb-2">{image.answer}</h3>
+                  <button
+                    title="حذف الصورة"
+                    onClick={() => handleDelete(image.id)}
+                    className="absolute top-2 left-2 text-red-500 hover:text-red-700 bg-white rounded-full p-1 shadow"
+                  >
+                    <Trash2 size={20} />
+                  </button>
                 </div>
               ))}
             </div>
