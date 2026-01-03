@@ -224,7 +224,6 @@ export function ThemeSwitcher({ studentId }: ThemeSwitcherProps) {
           <Palette className="w-5 h-5 md:w-6 md:h-6 text-[#d8a355]" />
           <h3 className="text-lg md:text-xl font-bold text-[#1a2332]">اختر المظهر</h3>
         </div>
-        <span className="text-xs md:text-sm text-gray-500">(يتم الحفظ تلقائياً)</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -338,7 +337,7 @@ export function ThemeSwitcher({ studentId }: ThemeSwitcherProps) {
 
       {ownedThemes.length === 1 && (
         <div className="bg-[#faf9f6] rounded-xl p-4 md:p-6 border-2 border-[#d8a355]/20 mt-4">
-          <p className="text-sm md:text-base text-center text-gray-600">اشتر مظاهر جديدة من المتجر لفتحها هنا ✨</p>
+          <p className="text-sm md:text-base text-center text-gray-600">قريباً يمكنك شراء مظاهر جديدة</p>
         </div>
       )}
     </div>
