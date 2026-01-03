@@ -273,7 +273,6 @@ export function EffectSelector({ studentId }: EffectSelectorProps) {
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-5 h-5 text-[#d8a355]" />
         <h3 className="text-lg font-bold text-[#1a2332]">اختر التأثير</h3>
-        <span className="text-xs text-gray-500">(يتم الحفظ تلقائياً)</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -323,7 +322,7 @@ export function EffectSelector({ studentId }: EffectSelectorProps) {
         </p>
       )}
 
-      <p className="text-sm text-center mt-4 text-gray-500">اشتر تأثيرات من المتجر لفتحها هنا</p>
+      <p className="text-sm text-center mt-4 text-gray-500">قريباً يمكنك شراء مظاهر جديدة!</p>
 
       <style jsx global>{`
         @keyframes fly {
