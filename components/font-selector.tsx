@@ -95,26 +95,20 @@ export function FontSelector({ studentId }: FontSelectorProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <h3 className="text-xl font-bold text-[#1a2332]">الخط</h3>
-        <span className="text-sm text-[#1a2332]/50">يتم الحفظ تلقائياً عند الاختيار</span>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {fonts.map((font) => {
-          const isPurchased = purchasedFonts.includes(font.id)
+        {fonts.filter((font) => purchasedFonts.includes(font.id)).map((font) => {
           const isActive = selectedFont === font.id
-
           return (
             <button
               key={font.id}
               onClick={() => handleFontSelect(font.id)}
-              disabled={!isPurchased}
               className={`relative p-6 rounded-xl border-3 transition-all duration-300 ${
                 isActive
                   ? "border-[#d8a355] bg-gradient-to-br from-[#d8a355]/10 to-[#c99347]/10 shadow-lg scale-105"
-                  : isPurchased
-                    ? "border-gray-200 hover:border-[#d8a355]/50 hover:shadow-md"
-                    : "border-gray-200 opacity-50 cursor-not-allowed"
+                  : "border-gray-200 hover:border-[#d8a355]/50 hover:shadow-md"
               }`}
             >
               {isActive && (
@@ -123,17 +117,6 @@ export function FontSelector({ studentId }: FontSelectorProps) {
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              )}
-              {!isPurchased && (
-                <div className="absolute -top-2 -right-2 bg-gray-400 text-white rounded-full p-1.5 shadow-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
                       clipRule="evenodd"
                     />
                   </svg>
