@@ -96,14 +96,16 @@ export default function StoreOrdersPage() {
       <div className="container mx-auto max-w-2xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-[#1a2332] text-center md:text-right">طلبات الطلاب</h1>
-          <Button
-            variant="destructive"
-            className="w-full md:w-auto"
-            onClick={deleteAllOrders}
-            disabled={orders.length === 0}
-          >
-            حذف الكل
-          </Button>
+          {showDelivered && (
+            <Button
+              variant="destructive"
+              className="w-full md:w-auto"
+              onClick={deleteAllOrders}
+              disabled={orders.length === 0}
+            >
+              حذف الكل
+            </Button>
+          )}
         </div>
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-8">
           <div className="flex justify-center gap-2 md:gap-4">
@@ -122,14 +124,16 @@ export default function StoreOrdersPage() {
               تم التسليم
             </Button>
           </div>
-          <Button
-            variant="success"
-            className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold"
-            onClick={markAllAsDelivered}
-            disabled={notDelivered.length === 0 || showDelivered}
-          >
-            تسليم الكل
-          </Button>
+          {!showDelivered && (
+            <Button
+              variant="success"
+              className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold"
+              onClick={markAllAsDelivered}
+              disabled={notDelivered.length === 0}
+            >
+              تسليم الكل
+            </Button>
+          )}
         </div>
         {loading ? (
           <div className="text-center text-gray-500">جاري التحميل...</div>
