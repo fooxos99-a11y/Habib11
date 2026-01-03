@@ -6,8 +6,39 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function StoreOrdersPage() {
+        // تعليم جميع الطلبات كـ تم التسليم
+        async function markAllAsDelivered() {
+          if (notDelivered.length === 0) return;
+          const res = await fetch("/api/store-orders/delivered", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mark_all: true })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) {
+            alert(data.error || "حدث خطأ أثناء تحديث حالة التسليم للجميع!");
+            return;
+          }
+          fetchOrders();
+        }
+      // حذف جميع الطلبات دفعة واحدة
+      async function deleteAllOrders() {
+        if (orders.length === 0) return;
+        // حذف كل الطلبات بدون تأكيد
+        const res = await fetch("/api/store-orders", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ delete_all: true })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          alert(data.error || "حدث خطأ أثناء حذف جميع الطلبات!");
+          return;
+        }
+        fetchOrders();
+      }
     async function deleteOrder(orderId: string) {
-      if (!window.confirm("هل أنت متأكد أنك تريد حذف هذا الطلب نهائياً؟")) return;
+      // حذف الطلب مباشرة بدون تأكيد
       const res = await fetch("/api/store-orders", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -63,21 +94,41 @@ export default function StoreOrdersPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f5f1e8] to-white py-10 px-2 md:px-0">
       <div className="container mx-auto max-w-2xl">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-[#1a2332] text-center">طلبات الطلاب</h1>
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#1a2332] text-center md:text-right">طلبات الطلاب</h1>
           <Button
-            variant={showDelivered ? "outline" : "default"}
-            className={showDelivered ? "border-[#d8a355] text-[#d8a355]" : "bg-[#d8a355] text-white"}
-            onClick={() => setShowDelivered(false)}
+            variant="destructive"
+            className="w-full md:w-auto"
+            onClick={deleteAllOrders}
+            disabled={orders.length === 0}
           >
-            الطلبات
+            حذف الكل
           </Button>
+        </div>
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-8">
+          <div className="flex justify-center gap-2 md:gap-4">
+            <Button
+              variant={showDelivered ? "outline" : "default"}
+              className={showDelivered ? "border-[#d8a355] text-[#d8a355]" : "bg-[#d8a355] text-white"}
+              onClick={() => setShowDelivered(false)}
+            >
+              الطلبات
+            </Button>
+            <Button
+              variant={!showDelivered ? "outline" : "default"}
+              className={!showDelivered ? "border-[#1a2332] text-[#1a2332]" : "bg-[#1a2332] text-white"}
+              onClick={() => setShowDelivered(true)}
+            >
+              تم التسليم
+            </Button>
+          </div>
           <Button
-            variant={!showDelivered ? "outline" : "default"}
-            className={!showDelivered ? "border-[#1a2332] text-[#1a2332]" : "bg-[#1a2332] text-white"}
-            onClick={() => setShowDelivered(true)}
+            variant="success"
+            className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold"
+            onClick={markAllAsDelivered}
+            disabled={notDelivered.length === 0 || showDelivered}
           >
-            تم التسليم
+            تسليم الكل
           </Button>
         </div>
         {loading ? (
