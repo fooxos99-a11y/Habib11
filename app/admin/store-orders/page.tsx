@@ -23,16 +23,19 @@ export default function StoreOrdersPage() {
         }
       // حذف جميع الطلبات دفعة واحدة
       async function deleteAllOrders() {
-        if (orders.length === 0) return;
-        // حذف كل الطلبات بدون تأكيد
+        // حذف الطلبات حسب الفلتر الحالي
+        const idsToDelete = showDelivered
+          ? delivered.map((o) => o.id)
+          : notDelivered.map((o) => o.id);
+        if (idsToDelete.length === 0) return;
         const res = await fetch("/api/store-orders", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ delete_all: true })
+          body: JSON.stringify({ ids: idsToDelete })
         });
         const data = await res.json();
         if (!res.ok || !data.success) {
-          alert(data.error || "حدث خطأ أثناء حذف جميع الطلبات!");
+          alert(data.error || "حدث خطأ أثناء حذف الطلبات!");
           return;
         }
         fetchOrders();
