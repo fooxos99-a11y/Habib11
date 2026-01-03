@@ -322,7 +322,6 @@ export function EffectSelector({ studentId }: EffectSelectorProps) {
         </p>
       )}
 
-      <p className="text-sm text-center mt-4 text-gray-500">قريباً يمكنك شراء مظاهر جديدة!</p>
 
       <style jsx global>{`
         @keyframes fly {
