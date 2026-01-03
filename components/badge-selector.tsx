@@ -125,21 +125,17 @@ export function BadgeSelector({ studentId }: BadgeSelectorProps) {
   return (
     <div>
       <h3 className="text-xl font-bold text-[#1a2332] mb-4">الشارات</h3>
-      <p className="text-sm text-[#1a2332]/60 mb-4">اختر شارة تظهر بجانب اسمك في لائحة الترتيب (يتم الحفظ تلقائياً)</p>
+      <p className="text-sm text-[#1a2332]/60 mb-4">اختر شارة تظهر بجانب اسمك في لائحة الترتيب</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {BADGES.map((badge) => {
-          const isOwned = badge.id === "badge_none" || purchases.includes(badge.id)
+        {BADGES.filter((badge) => badge.id === "badge_none" || purchases.includes(badge.id)).map((badge) => {
           const isActive = activeBadge === badge.id
-
           return (
             <button
               key={badge.id}
               onClick={() => handleBadgeSelect(badge.id)}
-              disabled={isLoading || !isOwned}
-              className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
-                isOwned ? "hover:scale-105 cursor-pointer" : "opacity-50 cursor-not-allowed"
-              } ${
+              disabled={isLoading}
+              className={`relative p-6 rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
                 isActive
                   ? "border-[#d8a355] shadow-lg bg-gradient-to-br from-[#d8a355]/10 to-transparent"
                   : "border-gray-200 hover:border-[#d8a355]/50"
@@ -152,7 +148,6 @@ export function BadgeSelector({ studentId }: BadgeSelectorProps) {
                 </div>
                 <div className="text-center">
                   <p className="font-bold text-[#1a2332]">{badge.name}</p>
-                  {!isOwned && <p className="text-xs text-red-500 mt-1">🔒 مقفل</p>}
                 </div>
               </div>
               {isActive && (
