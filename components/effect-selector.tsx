@@ -277,47 +277,44 @@ export function EffectSelector({ studentId }: EffectSelectorProps) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {Object.entries(EFFECTS).map(([key, effect]) => {
-          const isOwned = ownedEffects.includes(key)
-          const isActive = currentEffect === key
-
-          return (
-            <button
-              key={key}
-              onClick={() => handleEffectChange(key)}
-              disabled={!isOwned || saving}
-              className={`p-4 rounded-lg border-2 transition-all relative ${
-                isOwned
-                  ? isActive
+        {Object.entries(EFFECTS)
+          .filter(([key]) => ownedEffects.includes(key))
+          .map(([key, effect]) => {
+            const isActive = currentEffect === key
+            return (
+              <button
+                key={key}
+                onClick={() => handleEffectChange(key)}
+                disabled={saving}
+                className={`p-4 rounded-lg border-2 transition-all relative ${
+                  isActive
                     ? "ring-2 shadow-lg border-[#22C55E]"
                     : "border-gray-200 hover:border-gray-300 cursor-pointer"
-                  : "border-gray-300 bg-gray-50 cursor-not-allowed opacity-60"
-              }`}
-              style={
-                isOwned && isActive
-                  ? {
-                      boxShadow: `0 0 0 2px #22C55E33`,
-                    }
-                  : undefined
-              }
-            >
-              {isOwned && isActive && (
-                <div className="absolute top-2 right-2 z-10 bg-[#22C55E] rounded-full p-1">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
+                }`}
+                style={
+                  isActive
+                    ? {
+                        boxShadow: `0 0 0 2px #22C55E33`,
+                      }
+                    : undefined
+                }
+              >
+                {isActive && (
+                  <div className="absolute top-2 right-2 z-10 bg-[#22C55E] rounded-full p-1">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <div className="flex justify-center">{effect.preview}</div>
+                  <div className="text-center">
+                    <span className="font-semibold text-sm text-[#1a2332]">{effect.name}</span>
+                  </div>
                 </div>
-              )}
-              <div className="space-y-2">
-                <div className="flex justify-center">{effect.preview}</div>
-                <div className="text-center">
-                  <span className="font-semibold text-sm text-[#1a2332]">{effect.name}</span>
-                  {!isOwned && <span className="block text-xs text-gray-500 mt-1">🔒 مقفل</span>}
-                </div>
-              </div>
-            </button>
-          )
-        })}
+              </button>
+            )
+          })}
       </div>
 
       {saveMessage && (
