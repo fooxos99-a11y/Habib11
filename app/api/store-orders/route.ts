@@ -5,7 +5,28 @@ export async function DELETE(request: Request) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
     const body = await request.json();
-    const { order_id } = body;
+    const { order_id, delete_all, ids } = body;
+    if (Array.isArray(ids) && ids.length > 0) {
+      // حذف مجموعة محددة من الطلبات
+      const { error } = await supabase
+        .from("store_orders")
+        .delete()
+        .in("id", ids);
+      if (error) {
+        return NextResponse.json({ error: "فشل في حذف الطلبات المحددة" }, { status: 500 });
+      }
+      return NextResponse.json({ success: true });
+    }
+    if (delete_all) {
+      // حذف جميع الطلبات
+      const { error } = await supabase
+        .from("store_orders")
+        .delete();
+      if (error) {
+        return NextResponse.json({ error: "فشل في حذف جميع الطلبات" }, { status: 500 });
+      }
+      return NextResponse.json({ success: true });
+    }
     if (!order_id) {
       return NextResponse.json({ error: "رقم الطلب مفقود" }, { status: 400 });
     }
